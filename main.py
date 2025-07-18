@@ -1,4 +1,7 @@
 import glob
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 import json
 import os
 from typing import List

@@ -1,6 +1,6 @@
-# Default Dependencies
-pydantic>=2.0.0  # For data validation
-openai>=1.0.0  # For AI service integration
-lancedb==0.22.0
-docling==2.31.0
-cohere==5.15.0
+# Core Dependencies
+pydantic>=2.0.0        # Still used by Docling and LanceDB
+requests               # For communicating with Ollama's REST API
+lancedb==0.22.0        # Vector database
+pyarrow>=14.0.1        # Required by LanceDB
+docling==2.31.0        # PDF parsing and chunking

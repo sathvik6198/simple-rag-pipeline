@@ -1,18 +1,24 @@
-from openai import OpenAI
-
+import requests
 
 def invoke_ai(system_message: str, user_message: str) -> str:
     """
-    Generic function to invoke an AI model given a system and user message.
-    Replace this if you want to use a different AI model.
+    Invokes the locally hosted llama3 model via Ollama API.
+    This version uses ONLY Ollama. OpenAI is completely removed.
     """
+    url = "http://localhost:11434/api/chat"
 
-    client = OpenAI()  # Insert the API key here, or use env variable $OPENAI_API_KEY.
-    response = client.chat.completions.create(
-        model="o4-mini",
-        messages=[
+    payload = {
+        "model": "llama3",  # Uses locally pulled `llama3`
+        "messages": [
             {"role": "system", "content": system_message},
             {"role": "user", "content": user_message},
         ],
-    )
-    return response.choices[0].message.content
+        "stream": False
+    }
+
+    try:
+        response = requests.post(url, json=payload)
+        response.raise_for_status()
+        return response.json()["message"]["content"].strip()
+    except Exception as e:
+        return f"[Ollama llama3 Error] {str(e)}"
