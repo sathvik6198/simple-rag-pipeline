@@ -1,106 +1,137 @@
-# Simple RAG Pipeline
+# 🧠 Simple RAG Pipeline (Fully Local with Ollama + LLaMA3)
 
-This project is a beginner-friendly tutorial project for building a Retrieval Augmented Generation (RAG) system. It demonstrates how to index documents, retrieve relevant content, generate AI-powered responses, and evaluate results—all through a command line interface (CLI).
+This project is a beginner-friendly, end-to-end implementation of a **Retrieval-Augmented Generation (RAG)** pipeline, running fully **locally** using [Ollama](https://ollama.com/) and [LLaMA3](https://ollama.com/library/llama3). It demonstrates how to ingest documents, embed and store them, search for relevant content, generate answers, and evaluate accuracy—all through a clean and modular CLI.
 
-![rag-image](./rag-design-basic.png)
+![RAG Image](./rag-design-basic.png)
 
-## Overview
+---
 
-The RAG Framework lets you:
+## 🚀 Features
 
-- **Index Documents:** Process and break documents (e.g., PDFs) into smaller, manageable chunks.
-- **Store & Retrieve Information:** Save document embeddings in a vector database (using LanceDB) and search using similarity.
-- **Generate Responses:** Use an AI model (via the OpenAI API) to provide concise answers based on the retrieved context.
-- **Evaluate Responses:** Compare the generated response against expected answers and view the reasoning behind the evaluation.
+- ✅ Fully Local LLM with **Ollama + LLaMA3**
+- 📄 Index PDFs or plain text documents using custom or Docling-based indexers
+- 🔍 Embed text using **nomic-embed-text** (also via Ollama)
+- 🧠 Vector search using **LanceDB**
+- 🧵 Modular components for indexing, retrieval, generation, and evaluation
+- 📊 CLI commands for adding, querying, and evaluating
 
-## Architecture
+---
 
-- **Pipeline (src/rag_pipeline.py):**  
-  Orchestrates the process using:
+## 🧱 Architecture
 
-  - **Datastore:** Manages embeddings and vector storage.
-  - **Indexer:** Processes documents and creates data chunks. Two versions are available—a basic PDF indexer and one using the Docling package.
-  - **Retriever:** Searches the datastore to pull relevant document segments.
-  - **ResponseGenerator:** Generates answers by calling the AI service.
-  - **Evaluator:** Compares the AI responses to expected answers and explains the outcome.
+The pipeline is coordinated by `src/rag_pipeline.py` and includes:
 
-- **Interfaces (interface/):**  
-  Abstract base classes define contracts for all components (e.g., BaseDatastore, BaseIndexer, BaseRetriever, BaseResponseGenerator, and BaseEvaluator), making it easy to extend or swap implementations.
+- **Datastore:** Stores and retrieves vector embeddings via **LanceDB**
+- **Indexer:** Splits and embeds documents using **nomic-embed-text** via Ollama
+- **Retriever:** Performs similarity search and optional reranking
+- **Response Generator:** Uses **LLaMA3** locally through Ollama
+- **Evaluator:** Compares generated answers to expected ones from eval sets
 
-## Installation
+Each component has a base class (`interface/`) so it can be swapped or extended easily.
 
-#### Set Up a Virtual Environment (Optional but Recommended)
+---
+
+## ⚙️ Installation
+
+### 1. Clone the Repo
+
+```bash
+git clone https://github.com/sathvik6198/simple-rag-pipeline.git
+cd simple-rag-pipeline
+```
+
+### 2. Set Up Environment (Recommended)
 
 ```bash
 python -m venv venv
-source venv/bin/activate   # On Windows: venv\Scripts\activate
+source venv/bin/activate  # or venv\Scripts\activate on Windows
 ```
 
-#### Install Dependencies
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-#### Configure Environment Variables
+> ⚠️ Ensure `numpy` version is `<2.0` due to compatibility with LanceDB.
 
-We use OpenAI for the LLM (you can modify/replace it in `src/util/invoke_ai.py`). Make sure to set your OpenAI API key. For example:
+---
 
-```sh
-export OPENAI_API_KEY='your_openai_api_key'
-```
+## 🔧 Ollama Setup
 
-You will also need a Cohere key for the re-ranking feature used in `src/impl/retriever.py`. You can create an account and create an API key at https://cohere.com/
-
-```sh
-set -x CO_API_KEY "xxx"
-```
-
-## Usage
-
-The CLI provides several commands to interact with the RAG pipeline. By default, they will use the source/eval paths specified in `main.py`, but there are flags to override them.
-
-```python
-DEFAULT_SOURCE_PATH = "sample_data/source/"
-DEFAULT_EVAL_PATH = "sample_data/eval/sample_questions.json"
-```
-
-#### Run the Full Pipeline
-
-This command resets the datastore, indexes documents, and evaluates the model.
+Install Ollama from: https://ollama.com/download  
+Then pull the required models:
 
 ```bash
-python main.py run
+ollama pull llama3
+ollama pull nomic-embed-text
 ```
 
-#### Reset the Database
+---
 
-Clears the vector database.
+## 📁 Folder Structure
+
+```bash
+.
+├── main.py                  # CLI entry point
+├── src/
+│   ├── rag_pipeline.py      # Main RAG orchestrator
+│   ├── impl/                # Implementation of pipeline steps
+│   ├── util/                # Ollama client, embedding utilities
+│   └── interface/           # Base interfaces for each component
+├── sample_data/
+│   ├── source/              # Add your PDFs or text here
+│   └── eval/                # Evaluation question/answer pairs
+```
+
+---
+
+## 🧪 CLI Usage
+
+### Reset Vector Store
 
 ```bash
 python main.py reset
 ```
 
-#### Add Documents
-
-Index and embed documents. You can specify a file or directory path.
+### Index Documents
 
 ```bash
 python main.py add -p "sample_data/source/"
 ```
 
-#### Query the Database
-
-Search for information using a query string.
+### Query the System
 
 ```bash
 python main.py query "What is the opening year of The Lagoon Breeze Hotel?"
 ```
 
-#### Evaluate the Model
-
-Use a JSON file (with question/answer pairs) to evaluate the response quality.
+### Evaluate with JSON File
 
 ```bash
 python main.py evaluate -f "sample_data/eval/sample_questions.json"
 ```
+
+---
+
+## ✅ Requirements
+
+```txt
+pydantic>=2.0.0
+lancedb==0.22.0
+docling==2.31.0
+cohere==5.15.0  # Optional – used for reranking (can be removed)
+```
+
+---
+
+## 🙏 Acknowledgements
+
+This project is inspired by [**pixegami/simple-rag-pipeline**](https://github.com/pixegami/simple-rag-pipeline), which provides a clean and extensible foundation for RAG.
+
+My version includes:
+
+- 🔒 **Full local inference** using **Ollama + LLaMA3**
+- 🧠 Swapped embedding model to **nomic-embed-text** via Ollama
+- 🧹 Removed OpenAI dependency
+- ⚙️ Modular enhancements for easier local experimentation
