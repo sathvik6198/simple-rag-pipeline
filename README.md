@@ -127,7 +127,7 @@ cohere==5.15.0  # Optional – used for reranking (can be removed)
 
 ## 🙏 Acknowledgements
 
-This project is inspired by [**pixegami/simple-rag-pipeline**](https://github.com/pixegami/simple-rag-pipeline), which provides a clean and extensible foundation for RAG.
+This project is inspired by [**pixegami/simple-rag-pipeline**], which provides a clean and extensible foundation for RAG.
 
 My version includes:
 
