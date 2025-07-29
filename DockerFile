@@ -1,0 +1,27 @@
+# Base image with Python
+FROM python:3.10-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install OS-level dependencies
+RUN apt-get update && apt-get install -y \
+    git curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Ollama CLI (optional for triggering if inside container)
+# You may instead keep Ollama on host and expose port
+# RUN curl -fsSL https://ollama.com/install.sh | sh
+
+# Copy project files
+COPY . /app
+
+# Install Python dependencies
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+# Expose default Ollama port if needed (optional)
+EXPOSE 11434
+
+# Default command (change as needed)
+CMD ["python", "main.py"]
