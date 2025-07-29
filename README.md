@@ -19,13 +19,16 @@ This project is a beginner-friendly, end-to-end implementation of a **Retrieval-
 
 ## 🧱 Architecture
 
-The pipeline is coordinated by `src/rag_pipeline.py` and includes:
+The pipeline is modular and each part is responsible for a specific task:
 
-- **Datastore:** Stores and retrieves vector embeddings via **LanceDB**
-- **Indexer:** Splits and embeds documents using **nomic-embed-text** via Ollama
-- **Retriever:** Performs similarity search and optional reranking
-- **Response Generator:** Uses **LLaMA3** locally through Ollama
-- **Evaluator:** Compares generated answers to expected ones from eval sets
+| File/Module             | Responsibility                              |
+|-------------------------|----------------------------------------------|
+| `datastore.py`          | Vector storage and retrieval using LanceDB   |
+| `indexer.py`            | Parsing and chunking documents               |
+| `retriever.py`          | Finding relevant chunks using similarity     |
+| `response_generator.py` | LLM-based answer generation with LLaMA3      |
+| `evaluator.py`          | Comparing generated answers vs ground truth  |
+| `rag_pipeline.py`       | Orchestrates the full pipeline               |
 
 Each component has a base class (`interface/`) so it can be swapped or extended easily.
 
