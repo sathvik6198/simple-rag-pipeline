@@ -124,6 +124,42 @@ cohere==5.15.0  # Optional – used for reranking (can be removed)
 ```
 
 ---
+---
+
+## 🐳 Docker Usage
+
+You can run the entire RAG pipeline inside a Docker container without installing Python or dependencies locally.
+
+### 🔨 Build the Docker Image
+
+```bash
+docker build -t rag-pipeline .
+```
+
+### 🚀 Run the Pipeline
+
+Start the container and run the default command:
+
+```bash
+docker run --rm -it \
+  -v $(pwd)/sample_data:/app/sample_data \
+  -p 11434:11434 \
+  rag-pipeline
+```
+
+> 💡 Make sure [Ollama](https://ollama.com/) is running on your host machine (`ollama serve`) before starting the container.
+
+### ❓ Example: Query the Pipeline
+
+```bash
+docker run --rm -it \
+  -v $(pwd)/sample_data:/app/sample_data \
+  rag-pipeline python main.py query "What is the Lagoon Breeze Hotel?"
+```
+
+### 🛑 Clean Up
+
+Since we’re using `--rm`, the container will delete itself after exiting. No cleanup needed!
 
 ## 🙏 Acknowledgements
 
